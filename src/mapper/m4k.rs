@@ -21,11 +21,15 @@ impl UseAsMapper for Mapper4K {
     }
 
     fn read(&mut self, addr: usize) -> Result<u8> {
-        if addr >= self.rom.len() {
-            return Err(anyhow!("Could not read out of bounds address {addr:#x}."));
+        let wrapped_addr = addr % ROM_SIZE;
+
+        if wrapped_addr >= self.rom.len() {
+            return Err(anyhow!(
+                "Could not read out of bounds address {wrapped_addr:#x} (truncated from {addr:#x})."
+            ));
         };
 
-        Ok(self.rom[addr])
+        Ok(self.rom[wrapped_addr])
     }
 
     fn write(&mut self, _: usize) -> Result<()> {

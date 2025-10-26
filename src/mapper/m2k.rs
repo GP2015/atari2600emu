@@ -21,15 +21,15 @@ impl UseAsMapper for Mapper2K {
     }
 
     fn read(&mut self, addr: usize) -> Result<u8> {
-        let mirrored_addr = addr % ROM_SIZE;
+        let wrapped_addr = addr % ROM_SIZE;
 
-        if mirrored_addr >= self.rom.len() {
+        if wrapped_addr >= self.rom.len() {
             return Err(anyhow!(
-                "Could not read out of bounds address {addr:#x} (mirrored: {mirrored_addr:#x})."
+                "Could not read out of bounds address {wrapped_addr:#x} (truncated from {addr:#x})."
             ));
         };
 
-        Ok(self.rom[mirrored_addr])
+        Ok(self.rom[wrapped_addr])
     }
 
     fn write(&mut self, _: usize) -> Result<()> {
