@@ -1,9 +1,9 @@
 mod bus;
+mod config;
 mod cpu;
 mod mapper;
 mod state;
 
-use crate::bus::Bus;
 use crate::cpu::CPU;
 use crate::state::State;
 use anyhow::Result;
@@ -17,6 +17,7 @@ struct Args {
 
 fn main() -> Result<()> {
     let args = Args::parse();
+    let config = config::generate_config()?;
     let state = State::new();
 
     let mut cart = mapper::m2k::Mapper2K::new(&args.program_path)?;
