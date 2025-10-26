@@ -25,7 +25,7 @@ macro_rules! define_mappers {
         }
 
         impl MapperKind {
-            pub fn create(self, program_path: &str) -> anyhow::Result<Box<dyn UseAsMapper>> {
+            pub fn to_mapper(self, program_path: &str) -> anyhow::Result<Box<dyn UseAsMapper>> {
                 match self {
                     $(
                         MapperKind::$variant => Ok(Box::new($module::$struct_name::new(program_path)?)),

@@ -22,7 +22,7 @@ fn main() -> Result<()> {
     let config = config::generate_config()?;
     let state = State::new();
 
-    let mut cart = MapperKind::create(args.mapper, &args.program_path)?;
+    let mut cart = MapperKind::to_mapper(args.mapper, &args.program_path)?;
     let cpu = CPU::new(&mut *cart)?;
 
     Ok(())
