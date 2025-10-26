@@ -15,3 +15,16 @@ impl State {
         self.active = false;
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_state_active() {
+        let mut state = State::new();
+        assert_eq!(state.is_active(), true);
+        state.deactivate();
+        assert_eq!(state.is_active(), false);
+    }
+}
