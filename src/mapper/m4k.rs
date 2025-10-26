@@ -7,8 +7,8 @@ pub struct Mapper4K {
     rom: Vec<u8>,
 }
 
-impl Mapper4K {
-    pub fn new(program_path: &str) -> Result<Self> {
+impl UseAsMapper for Mapper4K {
+    fn new(program_path: &str) -> Result<Self> {
         let Ok(program) = std::fs::read(&program_path) else {
             return Err(anyhow!("Could not find valid program at {program_path}."));
         };
@@ -19,12 +19,10 @@ impl Mapper4K {
 
         Ok(Self { rom: program })
     }
-}
 
-impl Mapper for Mapper4K {
     fn read(&mut self, addr: usize) -> Result<u8> {
         if addr >= self.rom.len() {
-            return Err(anyhow!("Could not read out of bounds address {addr}."));
+            return Err(anyhow!("Could not read out of bounds address {addr:#x}."));
         };
 
         Ok(self.rom[addr])

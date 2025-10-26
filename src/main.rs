@@ -8,11 +8,13 @@ use crate::cpu::CPU;
 use crate::state::State;
 use anyhow::Result;
 use clap::Parser;
+use mapper::MapperKind;
 
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
 struct Args {
     program_path: String,
+    mapper: MapperKind,
 }
 
 fn main() -> Result<()> {
@@ -20,8 +22,8 @@ fn main() -> Result<()> {
     let config = config::generate_config()?;
     let state = State::new();
 
-    let mut cart = mapper::m2k::Mapper2K::new(&args.program_path)?;
-    let cpu = CPU::new(&mut cart)?;
+    let mut cart = MapperKind::create(args.mapper, &args.program_path)?;
+    let cpu = CPU::new(&mut *cart)?;
 
     Ok(())
 }

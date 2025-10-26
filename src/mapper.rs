@@ -1,16 +1,42 @@
+mod m2k;
+mod m4k;
+
 use anyhow::Result;
-use serde::Deserialize;
 
-pub mod m2k;
-pub mod m4k;
+pub trait UseAsMapper {
+    fn new(program_path: &str) -> Result<Self>
+    where
+        Self: Sized;
 
-#[derive(Deserialize, Debug)]
-pub enum MapperType {
-    M2K,
-    M4K,
-}
-
-pub trait Mapper {
     fn read(&mut self, addr: usize) -> Result<u8>;
     fn write(&mut self, addr: usize) -> Result<()>;
+}
+
+macro_rules! define_mappers {
+    (
+        $(
+            $variant:ident => $module:ident :: $struct_name:ident
+        ),* $(,)?
+    ) => {
+        #[derive(clap::ValueEnum, Copy, Clone, Debug, serde::Serialize)]
+        #[serde(rename_all = "lowercase")]
+        pub enum MapperKind {
+            $( $variant ),*
+        }
+
+        impl MapperKind {
+            pub fn create(self, program_path: &str) -> anyhow::Result<Box<dyn UseAsMapper>> {
+                match self {
+                    $(
+                        MapperKind::$variant => Ok(Box::new($module::$struct_name::new(program_path)?)),
+                    )*
+                }
+            }
+        }
+    };
+}
+
+define_mappers! {
+    M2K => m2k::Mapper2K,
+    M4K => m4k::Mapper4K,
 }

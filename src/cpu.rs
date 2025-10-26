@@ -1,4 +1,4 @@
-use crate::mapper::Mapper;
+use crate::mapper::UseAsMapper;
 use anyhow::Result;
 
 const PC_RESET_ADDR_HIGH_BYTE: usize = 0xFFFC;
@@ -20,7 +20,7 @@ pub struct CPU {
 }
 
 impl CPU {
-    pub fn new<T: Mapper>(cart: &mut T) -> Result<Self> {
+    pub fn new(cart: &mut dyn UseAsMapper) -> Result<Self> {
         let pc_high_byte = cart.read(PC_RESET_ADDR_HIGH_BYTE)?;
         let pc_low_byte = cart.read(PC_RESET_ADDR_LOW_BYTE)?;
 
