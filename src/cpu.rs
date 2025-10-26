@@ -1,7 +1,9 @@
-use crate::rom::ROM;
-use anyhow::{Result, anyhow};
+use crate::mapper::Mapper;
+use anyhow::Result;
 
-const PC_START_LOCATION: usize = 0xFFFC;
+const PC_START_ADDR_HIGH_BYTE: usize = 0xFFFC;
+const PC_START_ADDR_LOW_BYTE: usize = 0xFFFD;
+const STACK_POINTER_RESET_VALUE: u8 = 0xFD;
 
 pub struct CPU {
     program_counter: u16,
@@ -13,14 +15,19 @@ pub struct CPU {
 }
 
 impl CPU {
-    pub fn new(rom: &ROM) -> Result<Self> {
+    pub fn new<T: Mapper>(cart: &mut T) -> Result<Self> {
+        let pc_high_byte = cart.read(PC_START_ADDR_HIGH_BYTE)?;
+        let pc_low_byte = cart.read(PC_START_ADDR_LOW_BYTE)?;
+
+        let pc_start_addr = ((pc_high_byte as u16) << 8) | (pc_low_byte as u16);
+
         Ok(Self {
-            program_counter: rom.read_u16(PC_START_LOCATION)?,
+            program_counter: pc_start_addr,
             accumulator: 0,
             x_register: 0,
             y_register: 0,
             status_register: 0,
-            stack_pointer: 0,
+            stack_pointer: STACK_POINTER_RESET_VALUE,
         })
     }
 }

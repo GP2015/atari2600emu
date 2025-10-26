@@ -1,13 +1,12 @@
 mod bus;
 mod cpu;
-mod rom;
+mod mapper;
 mod state;
 
 use crate::bus::Bus;
 use crate::cpu::CPU;
-use crate::rom::ROM;
 use crate::state::State;
-use anyhow::{Result, anyhow};
+use anyhow::Result;
 use clap::Parser;
 
 #[derive(Parser, Debug)]
@@ -20,12 +19,8 @@ fn main() -> Result<()> {
     let args = Args::parse();
     let state = State::new();
 
-    let rw_line = Bus::new(false);
-    let data_bus = Bus::<u8>::new(0);
-    let addr_bus = Bus::<u16>::new(0);
-
-    let rom = ROM::new(&args.program_path)?;
-    let cpu = CPU::new(&rom)?;
+    let mut cart = mapper::m2k::Mapper2K::new(&args.program_path)?;
+    let cpu = CPU::new(&mut cart)?;
 
     Ok(())
 }
