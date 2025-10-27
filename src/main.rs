@@ -4,6 +4,7 @@ mod cpu;
 mod mapper;
 mod state;
 
+use crate::bus::Bus;
 use crate::cpu::CPU;
 use crate::state::State;
 use anyhow::Result;
@@ -22,8 +23,12 @@ fn main() -> Result<()> {
     let config = config::generate_config()?;
     let state = State::new();
 
+    let address_bus = Bus::new(13);
+    let data_bus = Bus::new(8);
+    let rw_buw = Bus::new(1);
+
     let mut cart = MapperKind::to_mapper(args.mapper, &args.program_path)?;
-    let cpu = CPU::new(&mut *cart)?;
+    let mut cpu = CPU::new();
 
     Ok(())
 }
