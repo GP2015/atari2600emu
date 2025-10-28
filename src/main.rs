@@ -20,6 +20,14 @@ struct Args {
 
 fn main() -> Result<()> {
     let args = Args::parse();
+
+    let Ok(program) = std::fs::read(&args.program_path) else {
+        return Err(anyhow!(
+            "Could not find valid program at {}.",
+            args.program_path
+        ));
+    };
+
     let config = config::generate_config()?;
     let mut state = State::new();
 
@@ -28,13 +36,6 @@ fn main() -> Result<()> {
     let mut rw_line = false;
     let mut phi2_line = false;
     let mut rdy_line = false;
-
-    let Ok(program) = std::fs::read(&args.program_path) else {
-        return Err(anyhow!(
-            "Could not find valid program at {}.",
-            args.program_path
-        ));
-    };
 
     let mut cart = MapperKind::to_mapper(args.mapper, program)?;
     let mut cpu = CPU::new();
