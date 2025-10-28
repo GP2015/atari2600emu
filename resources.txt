@@ -1,4 +1,4 @@
-MOS 650x datasheet:
+MOS 65XX datasheet:
 https://web.archive.org/web/20220629085756if_/http://archive.6502.org/datasheets/mos_6500_mpu_nov_1985.pdf
 
 Breakdown of mappers:
