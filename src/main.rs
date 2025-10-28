@@ -21,16 +21,20 @@ struct Args {
 fn main() -> Result<()> {
     let args = Args::parse();
     let config = config::generate_config()?;
-    let state = State::new();
+    let mut state = State::new();
 
-    let address_bus = Bus::new(13);
-    let data_bus = Bus::new(8);
-    let rw_line = false;
-    let phi2_line = false;
-    let rdy_line = false;
+    let mut address_bus = Bus::new(13);
+    let mut data_bus = Bus::new(8);
+    let mut rw_line = false;
+    let mut phi2_line = false;
+    let mut rdy_line = false;
 
     let mut cart = MapperKind::to_mapper(args.mapper, &args.program_path)?;
     let mut cpu = CPU::new();
+
+    loop {
+        cart.tick(&mut address_bus, &mut data_bus);
+    }
 
     Ok(())
 }

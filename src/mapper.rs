@@ -1,6 +1,7 @@
 mod m2k;
 mod m4k;
 
+use crate::bus::Bus;
 use anyhow::Result;
 
 pub trait UseAsMapper {
@@ -8,8 +9,7 @@ pub trait UseAsMapper {
     where
         Self: Sized;
 
-    fn read(&mut self, addr: usize) -> Result<u8>;
-    fn write(&mut self, addr: usize) -> Result<()>;
+    fn tick(&mut self, address_bus: &mut Bus, data_bus: &mut Bus);
 }
 
 macro_rules! define_mappers {

@@ -2,6 +2,7 @@ use super::*;
 use anyhow::{Result, anyhow};
 
 const ROM_SIZE: usize = 2048;
+const CHIP_ENABLE_LINE: usize = 12;
 
 pub struct Mapper2K {
     rom: Vec<u8>,
@@ -20,19 +21,11 @@ impl UseAsMapper for Mapper2K {
         Ok(Self { rom: program })
     }
 
-    fn read(&mut self, addr: usize) -> Result<u8> {
-        let wrapped_addr = addr % ROM_SIZE;
-
-        if wrapped_addr >= self.rom.len() {
-            return Err(anyhow!(
-                "Could not read out of bounds address {wrapped_addr:#x} (truncated from {addr:#x})."
-            ));
-        };
-
-        Ok(self.rom[wrapped_addr])
-    }
-
-    fn write(&mut self, _: usize) -> Result<()> {
-        Err(anyhow!("Writing to 2K mapper is not allowed."))
+    fn tick(&mut self, address_bus: &mut Bus, data_bus: &mut Bus) {
+        if address_bus.get_line(CHIP_ENABLE_LINE).unwrap() {
+            let addr = address_bus.get_combined();
+            let data = self.rom[addr % ROM_SIZE];
+            data_bus.set_combined(data as usize);
+        }
     }
 }
