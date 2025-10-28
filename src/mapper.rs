@@ -5,7 +5,7 @@ use crate::bus::Bus;
 use anyhow::Result;
 
 pub trait UseAsMapper {
-    fn new(program_path: &str) -> Result<Self>
+    fn new(program: Vec<u8>) -> Result<Self>
     where
         Self: Sized;
 
@@ -25,10 +25,10 @@ macro_rules! define_mappers {
         }
 
         impl MapperKind {
-            pub fn to_mapper(self, program_path: &str) -> anyhow::Result<Box<dyn UseAsMapper>> {
+            pub fn to_mapper(self, program: Vec<u8>) -> anyhow::Result<Box<dyn UseAsMapper>> {
                 match self {
                     $(
-                        MapperKind::$variant => Ok(Box::new($module::$struct_name::new(program_path)?)),
+                        MapperKind::$variant => Ok(Box::new($module::$struct_name::new(program)?)),
                     )*
                 }
             }

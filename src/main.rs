@@ -7,7 +7,7 @@ mod state;
 use crate::bus::Bus;
 use crate::cpu::CPU;
 use crate::state::State;
-use anyhow::Result;
+use anyhow::{Result, anyhow};
 use clap::Parser;
 use mapper::MapperKind;
 
@@ -29,7 +29,14 @@ fn main() -> Result<()> {
     let mut phi2_line = false;
     let mut rdy_line = false;
 
-    let mut cart = MapperKind::to_mapper(args.mapper, &args.program_path)?;
+    let Ok(program) = std::fs::read(&args.program_path) else {
+        return Err(anyhow!(
+            "Could not find valid program at {}.",
+            args.program_path
+        ));
+    };
+
+    let mut cart = MapperKind::to_mapper(args.mapper, program)?;
     let mut cpu = CPU::new();
 
     loop {

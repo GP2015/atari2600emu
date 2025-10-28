@@ -9,13 +9,9 @@ pub struct Mapper4K {
 }
 
 impl UseAsMapper for Mapper4K {
-    fn new(program_path: &str) -> Result<Self> {
-        let Ok(program) = std::fs::read(&program_path) else {
-            return Err(anyhow!("Could not find valid program at {program_path}."));
-        };
-
+    fn new(program: Vec<u8>) -> Result<Self> {
         if program.len() > ROM_SIZE {
-            return Err(anyhow!("Program {program_path} is too large."));
+            return Err(anyhow!("Program supplied is too large."));
         }
 
         Ok(Self { rom: program })
@@ -27,5 +23,43 @@ impl UseAsMapper for Mapper4K {
             let data = self.rom[addr % ROM_SIZE];
             data_bus.set_combined(data as usize);
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn create_test_objects(program: Vec<u8>) -> (Bus, Bus, Mapper4K) {
+        let address_bus = Bus::new(13);
+        let data_bus = Bus::new(8);
+        let cart = Mapper4K::new(program).unwrap();
+        (address_bus, data_bus, cart)
+    }
+
+    #[test]
+    fn test_m4k_no_read() {
+        let mut program = vec![0; ROM_SIZE];
+        program[0x67] = 0x89;
+
+        let (mut address_bus, mut data_bus, mut cart) = create_test_objects(program);
+
+        address_bus.set_combined(0x0067);
+        cart.tick(&mut address_bus, &mut data_bus);
+
+        assert_eq!(data_bus.get_combined(), 0x00);
+    }
+
+    #[test]
+    fn test_m4k_read() {
+        let mut program = vec![0; ROM_SIZE];
+        program[0x67] = 0x89;
+
+        let (mut address_bus, mut data_bus, mut cart) = create_test_objects(program);
+
+        address_bus.set_combined(0x1067);
+        cart.tick(&mut address_bus, &mut data_bus);
+
+        assert_eq!(data_bus.get_combined(), 0x89);
     }
 }
