@@ -1,5 +1,11 @@
+Atari 2600 specifications:
+https://problemkaputt.de/2k6specs.htm
+
 MOS 65XX datasheet:
 https://web.archive.org/web/20220629085756if_/http://archive.6502.org/datasheets/mos_6500_mpu_nov_1985.pdf
+
+MOS 6502 instruction set:
+https://www.masswerk.at/6502/6502_instruction_set.html
 
 Breakdown of mappers:
 http://blog.kevtris.org/blogfiles/Atari%202600%20Mappers.txt
