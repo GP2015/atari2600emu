@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-members = ["emucore", "emucore-macros"]
+members = ["common", "riot"]
 
 [workspace.package]
 edition = "2024"
@@ -9,7 +9,11 @@ edition = "2024"
 ahash = "0.8.12"
 arrayvec = { version = "0.7.6", default-features = false }
 derive_more = { version = "2.1.1", default-features = false, features = [
-    "full",
+    "deref",
+    "deref_mut",
+    "from",
+    "index",
+    "index_mut",
 ] }
 itertools = { version = "0.15.0", default-features = false }
 quote = "1.0.45"
